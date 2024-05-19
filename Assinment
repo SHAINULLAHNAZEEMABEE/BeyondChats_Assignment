@@ -1,0 +1,50 @@
+To accomplish this task, we can follow these steps:   
+
+Use Python to make requests to the given API endpoint (https://devapi.beyondchats.com/api/get_message_with_sources) to fetch the data.
+Parse the JSON response to extract the response-sources pairs.
+For each response, analyze its sources to identify citations. This might involve some natural language processing (NLP) techniques to determine if a response matches any of the sources.
+Return the citations for each response.
+Implement a user-friendly UI to display the results.
+Here's a basic implementation in Python using Flask for the UI and requests library for making HTTP requests:
+Code:-
+
+from flask import Flask, request, jsonify
+import requests
+
+app = Flask(__name__)
+
+API_ENDPOINT = "https://devapi.beyondchats.com/api/get_message_with_sources"
+
+def fetch_data_from_api():
+    response = requests.get(API_ENDPOINT)
+    data = response.json()
+    return data
+
+def identify_citations(response_sources):
+    # Define your logic to identify citations here
+    citations = []
+    for source in response_sources:
+        # Example logic: check if the source matches any known sources
+        if source in known_sources:
+            citations.append(source)
+    return citations
+
+@app.route('/get_citations', methods=['GET'])
+def get_citations():
+    data = fetch_data_from_api()
+    citations_data = []
+    for item in data:
+        response = item['response']
+        sources = item['sources']
+        citations = identify_citations(sources)
+        citations_data.append({'response': response, 'citations': citations})
+    return jsonify(citations_data)
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
+In this code:-
+
+The fetch_data_from_api function makes a GET request to the API endpoint and returns the JSON response.
+The identify_citations function takes a list of sources for a response and returns the citations based on some predefined logic. We'll need to define this logic based on our requirements and available data.
+The /get_citations route triggers the process, fetches data from the API, identifies citations for each response, and returns the result as JSON.
